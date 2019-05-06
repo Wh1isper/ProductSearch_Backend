@@ -15,7 +15,7 @@
 #include <vector>
 #include <set>
 #include <algorithm>
-#include "subsets.cpp"
+
 class Label2Com {
 public:
     struct ComInfo{
@@ -24,13 +24,14 @@ public:
         ComInfo();
         ComInfo(int sid,int cid);
         explicit ComInfo(Commodity &C);
-        int getSid();
-        int getCid();
+        int getSid() const;
+        int getCid() const;
         void SetSid(int sid);
         void SetCid(int cid);
-        bool operator == (ComInfo B);
-        bool operator > (ComInfo B);
-        bool operator < (ComInfo B);
+        bool operator == (const ComInfo &B) const;
+        ComInfo& operator = (const ComInfo &B);
+        bool operator > (const ComInfo &B) const;
+        bool operator < (const ComInfo &B) const;
     };// 存放商品信息
     Label2Com();
     explicit Label2Com(unsigned int max);
@@ -76,8 +77,10 @@ private:
     }; // 倒排索引表头TabelNode(string Label, ComInfo->ComInfo->...->ComInfo)
     std::vector<TableNode> Table; // 存放倒排索引表头
     std::vector<TableNode> creatTable();
+    void dfs(int i, std::vector<int>& nums, std::vector<int>& cur, std::vector<std::vector<int>>& res);
+    std::vector<std::vector<int>> subsets(std::vector<int>& nums);
 };
-
+bool cmp(const std::vector<int> &a, const std::vector<int> &b);
 
 
 #endif //SOFTWARE_LABEL2COM_H

@@ -49,11 +49,11 @@ Label2Com::ComInfo::ComInfo(int sid, int cid) {
     Sid = sid;
 }
 
-int Label2Com::ComInfo::getSid() {
+int Label2Com::ComInfo::getSid() const {
     return Sid;
 }
 
-int Label2Com::ComInfo::getCid() {
+int Label2Com::ComInfo::getCid() const {
     return Cid;
 }
 
@@ -61,20 +61,26 @@ void Label2Com::ComInfo::SetCid(int cid) {
     Cid = cid;
 }
 
-void Label2Com::ComInfo::SetSid(int sid) {
+void Label2Com::ComInfo::SetSid(int sid){
     Sid = sid;
 }
 
-bool Label2Com::ComInfo::operator==(Label2Com::ComInfo B) {
+bool Label2Com::ComInfo::operator==(const Label2Com::ComInfo &B) const {
     return this->getSid() == B.getSid() && this->getCid() == B.getCid();
 }
 
-bool Label2Com::ComInfo::operator>(Label2Com::ComInfo B) {
-    return this->getSid() > B.getSid() ? true : this->getCid() > B.getCid();
+Label2Com::ComInfo& Label2Com::ComInfo::operator=(const Label2Com::ComInfo &B){
+    this->Cid = B.getCid();
+    this->Sid = B.getSid();
+    return *this;
 }
 
-bool Label2Com::ComInfo::operator<(Label2Com::ComInfo B) {
-    return this->getSid() > B.getSid() ? this->getCid() > B.getCid() : true;
+bool Label2Com::ComInfo::operator>(const Label2Com::ComInfo &B) const {
+    return this->getSid() > B.getSid() ? true : this->getSid() == B.getSid() ? this->getCid() > B.getCid() : false;
+}
+
+bool Label2Com::ComInfo::operator<(const Label2Com::ComInfo &B) const {
+    return this->getSid() < B.getSid() ? true : this->getSid() == B.getSid() ? this->getCid() < B.getCid() : false;
 }
 
 Label2Com::ComList::ComList() {
@@ -110,7 +116,8 @@ Label2Com::TableNode::TableNode(Label &lbl, Label2Com::ComList *CL) {
 bool Label2Com::TableNode::insertCom(Commodity &C) {
     ComList *temp = CList;
     while (temp->Next) {
-        if (temp->getInfo() == ComInfo(C))
+        ComInfo info(C);
+        if (temp->getInfo() == info)
             return false;
         temp = temp->Next;
     }
@@ -253,7 +260,7 @@ std::vector<Label2Com::ComInfo> Label2Com::linerSearch(LabelList lblList) {
         std::vector<Label2Com::ComInfo> temp = linerSearch(lbl);
         resSet.insert(temp.begin(), temp.end());
     }
-    for (ComInfo info:resSet){
+    for (ComInfo info:resSet) {
         res.push_back(info);
     }
     return res;
@@ -274,31 +281,35 @@ std::vector<std::vector<Label2Com::ComInfo>> Label2Com::multSearch(LabelList &lb
     int count = 0;
     for (const Label &L:labelList) {
         tmpResult = linerSearch(L);
+        std::set<ComInfo> tmpSet;
         for (const ComInfo &info:tmpResult) {
-            totSet[count].insert(info);
+            tmpSet.insert(info);
         }
-        ++count;
+        totSet.push_back(tmpSet);
     }
-    if(!totSet.empty()) {
+    if (!totSet.empty()) {
         std::vector<int> nums;
-        for (int i = 0; i < nums.size(); ++i) {
+        for (int i = 0; i < totSet.size(); ++i) {
             nums.push_back(i);
         }
         std::vector<std::vector<int>> sequence = subsets(nums);
-        sort(sequence.begin(), sequence.end(), compare);
-        count = 0;
+        sort(sequence.begin(), sequence.end(), cmp);
         for (const std::vector<int> &list:sequence) {
             std::set<ComInfo> curSet;
             for (int i:list) {
-                curSet.insert(totSet[i].begin(), totSet[i].end());
+                if(curSet.empty())
+                    curSet.insert(totSet[i].begin(), totSet[i].end());
+                else
+                    std::set_union(totSet[i].begin(), totSet[i].end(),curSet.begin(),curSet.end(),std::inserter(curSet,std::begin(curSet)));
             }
+            std::vector<Label2Com::ComInfo> curRes;
             for (ComInfo info:curSet) {
-                searchResult[count].push_back(info);
+                curRes.push_back(info);
             }
-            ++count;
+            searchResult.push_back(curRes);
         }
+        searchResult.pop_back();
     }
-
     return searchResult;
 }
 
@@ -307,3 +318,24 @@ std::vector<std::vector<Label2Com::ComInfo>> Label2Com::multSearch(std::vector<L
     return multSearch(list);
 }
 
+void Label2Com::dfs(int i, std::vector<int> &nums, std::vector<int> &cur, std::vector<std::vector<int>> &res) {
+    res.emplace_back(cur);
+    if (i >= nums.size())
+        return;
+    for (int j = i; j < nums.size(); ++j) {
+        cur.push_back(nums[j]);
+        dfs(j + 1, nums, cur, res);
+        cur.pop_back();
+    }
+}
+
+bool cmp(const std::vector<int> &a, const std::vector<int> &b) {
+    return a.size() > b.size();
+}
+
+std::vector<std::vector<int>> Label2Com::subsets(std::vector<int> &nums) {
+    std::vector<std::vector<int>> res;
+    std::vector<int> cur;
+    dfs(0, nums, cur, res);
+    return res;
+}

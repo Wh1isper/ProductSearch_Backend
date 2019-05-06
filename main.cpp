@@ -5,8 +5,8 @@ void Example_initial();
 void Example_readAndEdit();
 void Example_Search();
 int main() {
-    Example_initial();
-    Example_readAndEdit();
+    //Example_initial();
+   // Example_readAndEdit();
     Example_Search();
     return 0;
 }
@@ -47,8 +47,16 @@ void Example_Search(){
     StoreMap SM = reader.readFiles();
     Label2Com searcher(SM);                                         // 创建倒排索引
     std::vector<ComInfo> CifList = searcher.linerSearch("Label2");  // 获得搜索结果列表
+    LabelList L("Label1");
+    L.append("Label2");
+    std::vector<std::vector<ComInfo>> multiList = searcher.multSearch(L);
     for (ComInfo Cif:CifList) {
         //Commodity C = searchCommodity(SM, Cif);                   // 获得每个商品，商品过多时请分批次获取
     }
-    std::cout << "找到商品数：" << CifList.size() << std::endl;
+    int i=0;// 在这段测试代码中 你将会看到class0为label1、label2共同商标商品数，class1、class2为label1、label2商品数
+    for (std::vector<ComInfo> searchResult:multiList){
+        std::vector<ComInfo> curList = searchResult;
+        std::cout<< "class "<< i << "  ,find:"<< curList.size()<<std::endl;
+        ++i;
+    }
 }
