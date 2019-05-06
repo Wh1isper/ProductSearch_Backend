@@ -13,6 +13,9 @@
 #include "../database/CommodityMap.h"
 #include "../database/StoreMap.h"
 #include <vector>
+#include <set>
+#include <algorithm>
+#include "subsets.cpp"
 class Label2Com {
 public:
     struct ComInfo{
@@ -26,6 +29,8 @@ public:
         void SetSid(int sid);
         void SetCid(int cid);
         bool operator == (ComInfo B);
+        bool operator > (ComInfo B);
+        bool operator < (ComInfo B);
     };// 存放商品信息
     Label2Com();
     explicit Label2Com(unsigned int max);
@@ -42,7 +47,9 @@ public:
     bool del(StoreMap &SMap);
     bool clear();
     std::vector<ComInfo> linerSearch(const Label &lbl);// 线性搜索
-    std::vector<ComInfo> linerSearch(LabelList lblList);
+    std::vector<ComInfo> linerSearch(LabelList lblList);// 精确搜索
+    std::vector<std::vector<ComInfo>> multSearch(LabelList &lblList);
+    std::vector<std::vector<ComInfo>> multSearch(std::vector<Label> &lblList);
 
 private:
     unsigned int maxLabelNum;// 最大标签数
@@ -70,6 +77,7 @@ private:
     std::vector<TableNode> Table; // 存放倒排索引表头
     std::vector<TableNode> creatTable();
 };
+
 
 
 #endif //SOFTWARE_LABEL2COM_H

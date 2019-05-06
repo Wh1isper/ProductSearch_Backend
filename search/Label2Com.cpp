@@ -52,18 +52,29 @@ Label2Com::ComInfo::ComInfo(int sid, int cid) {
 int Label2Com::ComInfo::getSid() {
     return Sid;
 }
+
 int Label2Com::ComInfo::getCid() {
     return Cid;
 }
+
 void Label2Com::ComInfo::SetCid(int cid) {
     Cid = cid;
 }
+
 void Label2Com::ComInfo::SetSid(int sid) {
     Sid = sid;
 }
 
 bool Label2Com::ComInfo::operator==(Label2Com::ComInfo B) {
-    return this->getSid()==B.getSid() && this->getCid() == B.getCid();
+    return this->getSid() == B.getSid() && this->getCid() == B.getCid();
+}
+
+bool Label2Com::ComInfo::operator>(Label2Com::ComInfo B) {
+    return this->getSid() > B.getSid() ? true : this->getCid() > B.getCid();
+}
+
+bool Label2Com::ComInfo::operator<(Label2Com::ComInfo B) {
+    return this->getSid() > B.getSid() ? this->getCid() > B.getCid() : true;
 }
 
 Label2Com::ComList::ComList() {
@@ -97,9 +108,8 @@ Label2Com::TableNode::TableNode(Label &lbl, Label2Com::ComList *CL) {
 }
 
 bool Label2Com::TableNode::insertCom(Commodity &C) {
-    ComList * temp = CList;
-    while(temp->Next)
-    {
+    ComList *temp = CList;
+    while (temp->Next) {
         if (temp->getInfo() == ComInfo(C))
             return false;
         temp = temp->Next;
@@ -109,7 +119,7 @@ bool Label2Com::TableNode::insertCom(Commodity &C) {
 }
 
 bool Label2Com::TableNode::insertCom(CommodityMap &CMap) {
-    for(Commodity C:CMap.getComList()){
+    for (Commodity C:CMap.getComList()) {
         insertCom(C);
     }
     return true;
@@ -129,8 +139,8 @@ Label2Com::ComInfo Label2Com::ComList::getInfo() {
 
 std::vector<Label2Com::ComInfo> Label2Com::TableNode::getComList() {
     std::vector<Label2Com::ComInfo> res;
-    ComList * temp = CList->Next;
-    while (temp){
+    ComList *temp = CList->Next;
+    while (temp) {
         res.push_back(temp->getInfo());
         temp = temp->Next;
     }
@@ -141,8 +151,9 @@ std::vector<Label2Com::ComInfo> Label2Com::TableNode::getComList() {
 std::vector<Label2Com::TableNode> Label2Com::creatTable() {
     return std::vector<Label2Com::TableNode>(maxLabelNum);
 }
+
 bool Label2Com::insertTable(StoreMap &SMap) {
-    for (Store S:SMap.getStoreList()){
+    for (Store S:SMap.getStoreList()) {
         insertTable(S);
     }
     return true;
@@ -160,22 +171,21 @@ bool Label2Com::insertTable(CommodityMap &CMap) {
 }
 
 bool Label2Com::insertTable(Commodity &C) {
-    for(Label L:C.getLabel().getLabelList()){
+    for (Label L:C.getLabel().getLabelList()) {
         bool find = false;
         for (TableNode Node:Table) {
-            if(Node.getLabel() == L)
-            {
+            if (Node.getLabel() == L) {
                 Node.insertCom(C);
                 find = true;
                 break;
             }
         }
-        if (!find){
+        if (!find) {
             TableNode tmp(L);
             tmp.insertCom(C);
             Table[labelNum] = tmp;
             ++labelNum;
-            if(labelNum + 1 > maxLabelNum){
+            if (labelNum + 1 > maxLabelNum) {
                 maxLabelNum *= 2;
                 Table.resize(maxLabelNum);
             }
@@ -186,16 +196,14 @@ bool Label2Com::insertTable(Commodity &C) {
 
 bool Label2Com::del(Commodity &C) {
     ComInfo des(C);
-    for (const Label &L:C.getLabel().getLabelList()){
+    for (const Label &L:C.getLabel().getLabelList()) {
         for (TableNode Node:Table)
-            if (Node.getLabel() == L)
-            {
-                ComList * pos = Node.CList->Next;
-                ComList * temp = Node.CList;
-                while (pos){
+            if (Node.getLabel() == L) {
+                ComList *pos = Node.CList->Next;
+                ComList *temp = Node.CList;
+                while (pos) {
                     ComInfo info = pos->getInfo();
-                    if (info == des)
-                    {
+                    if (info == des) {
                         temp->Next = pos->Next;
                         delete pos;
                         break;
@@ -210,7 +218,7 @@ bool Label2Com::del(Commodity &C) {
 
 bool Label2Com::del(CommodityMap &CMap) {
     for (Commodity C:CMap.getComList()) {
-        if(!del(C))
+        if (!del(C))
             return false;
     }
     return true;
@@ -222,8 +230,8 @@ bool Label2Com::del(Store &S) {
 }
 
 bool Label2Com::del(StoreMap &SMap) {
-    for (Store S:SMap.getStoreList()){
-        if(!del(S))
+    for (Store S:SMap.getStoreList()) {
+        if (!del(S))
             return false;
     }
     return true;
@@ -231,8 +239,8 @@ bool Label2Com::del(StoreMap &SMap) {
 
 std::vector<Label2Com::ComInfo> Label2Com::linerSearch(const Label &lbl) {
     std::vector<Label2Com::ComInfo> res;
-    for (TableNode TNode:Table){
-        if(lbl == TNode.getLabel())
+    for (TableNode TNode:Table) {
+        if (lbl == TNode.getLabel())
             return TNode.getComList();
     }
     return res;
@@ -240,9 +248,13 @@ std::vector<Label2Com::ComInfo> Label2Com::linerSearch(const Label &lbl) {
 
 std::vector<Label2Com::ComInfo> Label2Com::linerSearch(LabelList lblList) {
     std::vector<Label2Com::ComInfo> res;
-    for (const Label &lbl:lblList.getLabelList()){
+    std::set<Label2Com::ComInfo> resSet;
+    for (const Label &lbl:lblList.getLabelList()) {
         std::vector<Label2Com::ComInfo> temp = linerSearch(lbl);
-        res.insert(res.end(),temp.begin(),temp.end());
+        resSet.insert(temp.begin(), temp.end());
+    }
+    for (ComInfo info:resSet){
+        res.push_back(info);
     }
     return res;
 }
@@ -252,5 +264,46 @@ bool Label2Com::clear() {
     labelNum = 1;
     Table = creatTable();
     return true;
+}
+
+std::vector<std::vector<Label2Com::ComInfo>> Label2Com::multSearch(LabelList &lblList) {
+    std::vector<std::vector<Label2Com::ComInfo>> searchResult;
+    std::vector<Label2Com::ComInfo> tmpResult;
+    std::vector<std::set<ComInfo>> totSet;
+    std::vector<Label> labelList = lblList.getLabelList();
+    int count = 0;
+    for (const Label &L:labelList) {
+        tmpResult = linerSearch(L);
+        for (const ComInfo &info:tmpResult) {
+            totSet[count].insert(info);
+        }
+        ++count;
+    }
+    if(!totSet.empty()) {
+        std::vector<int> nums;
+        for (int i = 0; i < nums.size(); ++i) {
+            nums.push_back(i);
+        }
+        std::vector<std::vector<int>> sequence = subsets(nums);
+        sort(sequence.begin(), sequence.end(), compare);
+        count = 0;
+        for (const std::vector<int> &list:sequence) {
+            std::set<ComInfo> curSet;
+            for (int i:list) {
+                curSet.insert(totSet[i].begin(), totSet[i].end());
+            }
+            for (ComInfo info:curSet) {
+                searchResult[count].push_back(info);
+            }
+            ++count;
+        }
+    }
+
+    return searchResult;
+}
+
+std::vector<std::vector<Label2Com::ComInfo>> Label2Com::multSearch(std::vector<Label> &lblList) {
+    LabelList list(lblList);
+    return multSearch(list);
 }
 
