@@ -193,10 +193,37 @@ bool delStore(StoreMap &SM, int sid) {
     return SM.remove(sid);
 }
 
-Commodity &searchCommodity(Store S, ComInfo Info) {
+const Commodity &getCommodity(Store S, ComInfo Info) {
         return S.getComMap().getCommodity(Info.getCid());
 }
 
-Commodity &searchCommodity(StoreMap SMap, ComInfo Info) {
+const Commodity &getCommodity(StoreMap SMap, ComInfo Info) {
     return SMap.getStore(Info.getSid()).getComMap().getCommodity(Info.getCid());
+}
+
+std::vector<Commodity> searchCmdt(Label2Com index, StoreMap SMap, Label lbl){
+    std::vector<ComInfo> Info = index.singleSearch(lbl);
+    std::vector<Commodity> res;
+    for (const ComInfo &info:Info){
+        res.push_back(getCommodity(SMap,info));
+    }
+    return res;
+}
+std::vector<Commodity> searchCmdt_single(Label2Com index, StoreMap SMap, LabelList lbl){
+    std::vector<ComInfo> Info = index.singleSearch(lbl);
+    std::vector<Commodity> res;
+    for (const ComInfo &info:Info){
+        res.push_back(getCommodity(SMap,info));
+    }
+    return res;
+}
+std::vector<Commodity> searchCmdt_mult(Label2Com index, StoreMap SMap, LabelList lbl){
+    std::vector<std::vector<ComInfo>> InfoList = index.multSearch(lbl);
+    std::vector<Commodity> res;
+    for (const std::vector<ComInfo> &curList:InfoList){
+        for (const ComInfo &info:curList) {
+            res.push_back(getCommodity(SMap,info));
+        }
+    }
+    return res;
 }

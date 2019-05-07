@@ -47,8 +47,8 @@ public:
     bool del(Store &S);
     bool del(StoreMap &SMap);
     bool clear();
-    std::vector<ComInfo> linerSearch(const Label &lbl);// 线性搜索
-    std::vector<ComInfo> linerSearch(LabelList lblList);// 精确搜索
+    std::vector<ComInfo> singleSearch(const Label &lbl);// 线性搜索
+    std::vector<ComInfo> singleSearch(LabelList lblList);// 精确搜索
     std::vector<std::vector<ComInfo>> multSearch(LabelList &lblList);
     std::vector<std::vector<ComInfo>> multSearch(std::vector<Label> &lblList);
 

@@ -66,7 +66,7 @@ void Label2Com::ComInfo::SetSid(int sid){
 }
 
 bool Label2Com::ComInfo::operator==(const Label2Com::ComInfo &B) const {
-    return this->getSid() == B.getSid() && this->getCid() == B.getCid();
+    return (this->getSid() == B.getSid()) && (this->getCid() == B.getCid());
 }
 
 Label2Com::ComInfo& Label2Com::ComInfo::operator=(const Label2Com::ComInfo &B){
@@ -188,9 +188,9 @@ bool Label2Com::insertTable(Commodity &C) {
             }
         }
         if (!find) {
-            TableNode tmp(L);
-            tmp.insertCom(C);
-            Table[labelNum] = tmp;
+            TableNode diffSet(L);
+            diffSet.insertCom(C);
+            Table[labelNum] = diffSet;
             ++labelNum;
             if (labelNum + 1 > maxLabelNum) {
                 maxLabelNum *= 2;
@@ -244,7 +244,7 @@ bool Label2Com::del(StoreMap &SMap) {
     return true;
 }
 
-std::vector<Label2Com::ComInfo> Label2Com::linerSearch(const Label &lbl) {
+std::vector<Label2Com::ComInfo> Label2Com::singleSearch(const Label &lbl) {
     std::vector<Label2Com::ComInfo> res;
     for (TableNode TNode:Table) {
         if (lbl == TNode.getLabel())
@@ -253,17 +253,8 @@ std::vector<Label2Com::ComInfo> Label2Com::linerSearch(const Label &lbl) {
     return res;
 }
 
-std::vector<Label2Com::ComInfo> Label2Com::linerSearch(LabelList lblList) {
-    std::vector<Label2Com::ComInfo> res;
-    std::set<Label2Com::ComInfo> resSet;
-    for (const Label &lbl:lblList.getLabelList()) {
-        std::vector<Label2Com::ComInfo> temp = linerSearch(lbl);
-        resSet.insert(temp.begin(), temp.end());
-    }
-    for (ComInfo info:resSet) {
-        res.push_back(info);
-    }
-    return res;
+std::vector<Label2Com::ComInfo> Label2Com::singleSearch(LabelList lblList) {
+    return multSearch(lblList)[0];
 }
 
 bool Label2Com::clear() {
@@ -275,17 +266,16 @@ bool Label2Com::clear() {
 
 std::vector<std::vector<Label2Com::ComInfo>> Label2Com::multSearch(LabelList &lblList) {
     std::vector<std::vector<Label2Com::ComInfo>> searchResult;
-    std::vector<Label2Com::ComInfo> tmpResult;
+    std::vector<Label2Com::ComInfo> diffSetResult;
     std::vector<std::set<ComInfo>> totSet;
     std::vector<Label> labelList = lblList.getLabelList();
-    int count = 0;
     for (const Label &L:labelList) {
-        tmpResult = linerSearch(L);
-        std::set<ComInfo> tmpSet;
-        for (const ComInfo &info:tmpResult) {
-            tmpSet.insert(info);
+        diffSetResult = singleSearch(L);
+        std::set<ComInfo> diffSetSet;
+        for (const ComInfo &info:diffSetResult) {
+            diffSetSet.insert(info);
         }
-        totSet.push_back(tmpSet);
+        totSet.push_back(diffSetSet);
     }
     if (!totSet.empty()) {
         std::vector<int> nums;
@@ -293,6 +283,7 @@ std::vector<std::vector<Label2Com::ComInfo>> Label2Com::multSearch(LabelList &lb
             nums.push_back(i);
         }
         std::vector<std::vector<int>> sequence = subsets(nums);
+        std::set<ComInfo> usedSet;
         sort(sequence.begin(), sequence.end(), cmp);
         for (const std::vector<int> &list:sequence) {
             std::set<ComInfo> curSet;
@@ -300,10 +291,20 @@ std::vector<std::vector<Label2Com::ComInfo>> Label2Com::multSearch(LabelList &lb
                 if(curSet.empty())
                     curSet.insert(totSet[i].begin(), totSet[i].end());
                 else
-                    std::set_union(totSet[i].begin(), totSet[i].end(),curSet.begin(),curSet.end(),std::inserter(curSet,std::begin(curSet)));
+                {
+                    std::set<ComInfo> uniSet;
+                    std::set_intersection(totSet[i].begin(), totSet[i].end(),curSet.begin(),curSet.end(),
+                            std::inserter(uniSet,uniSet.begin()));
+                    curSet.clear();
+                    curSet.insert(uniSet.begin(),uniSet.end());
+                }
             }
+            std::set<ComInfo> diffSet;
+            std::set_difference(curSet.begin(),curSet.end(),usedSet.begin(),usedSet.end(),
+                    std::inserter(diffSet,diffSet.begin()));
+            usedSet.insert(diffSet.begin(),diffSet.end());
             std::vector<Label2Com::ComInfo> curRes;
-            for (ComInfo info:curSet) {
+            for (ComInfo info:diffSet) {
                 curRes.push_back(info);
             }
             searchResult.push_back(curRes);

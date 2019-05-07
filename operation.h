@@ -72,7 +72,10 @@ int registStore(StoreMap &SM, Store &S); // 商户注册 返回sid
 bool updateStore(StoreMap &SM, Store &S);// 更新商户信息
 
 // 用户搜索操作
-Commodity &searchCommodity(StoreMap SMap, ComInfo Info);
-Commodity &searchCommodity(Store S, ComInfo Info);
+const Commodity &getCommodity(StoreMap SMap, ComInfo Info);
+const Commodity &getCommodity(Store S, ComInfo Info);
+std::vector<Commodity> searchCmdt(Label2Com index, StoreMap SMap, Label lbl);            // 单标签搜索
+std::vector<Commodity> searchCmdt_single(Label2Com index, StoreMap SMap, LabelList lbl); // 精确查找，所有标签交集
+std::vector<Commodity> searchCmdt_mult(Label2Com index, StoreMap SMap, LabelList lbl);   // 模糊查找
 
 #endif //SOFTWARE_OPERATION_H

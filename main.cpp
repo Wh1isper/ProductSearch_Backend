@@ -1,6 +1,6 @@
 #include <iostream>
 #include "operation.h"
-#include "test/testop.h"
+
 void Example_initial();
 void Example_readAndEdit();
 void Example_Search();
@@ -45,18 +45,13 @@ void Example_readAndEdit(){
 void Example_Search(){
     Util reader;
     StoreMap SM = reader.readFiles();
-    Label2Com searcher(SM);                                         // 创建倒排索引
-    std::vector<ComInfo> CifList = searcher.linerSearch("Label2");  // 获得搜索结果列表
-    LabelList L("Label1");
-    L.append("Label2");
-    std::vector<std::vector<ComInfo>> multiList = searcher.multSearch(L);
-    for (ComInfo Cif:CifList) {
-        //Commodity C = searchCommodity(SM, Cif);                   // 获得每个商品，商品过多时请分批次获取
-    }
-    int i=0;// 在这段测试代码中 你将会看到class0为label1、label2共同商标商品数，class1、class2为label1、label2商品数
-    for (std::vector<ComInfo> searchResult:multiList){
-        std::vector<ComInfo> curList = searchResult;
-        std::cout<< "class "<< i << "  ,find:"<< curList.size()<<std::endl;
-        ++i;
-    }
+    Label2Com indexer(SM);                                         // 创建倒排索引
+    std::vector<Commodity> singleLabelSearch = searchCmdt(indexer,SM,"Label0");
+
+    LabelList L("Label1");L.append("Label0");L.append("Label4");L.append("Label8");
+    std::vector<Commodity> accurateLabelSearch = searchCmdt_single(indexer,SM,L);
+    std::vector<Commodity> multLabelSearch = searchCmdt_mult(indexer,SM,L);
+    std::cout << "single search Num:" << singleLabelSearch.size() << std::endl;
+    std::cout << "accurate search Num:" << accurateLabelSearch.size() << std::endl;
+    std::cout << "mult search Num:" << multLabelSearch.size() << std::endl;
 }
