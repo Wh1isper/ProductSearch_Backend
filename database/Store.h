@@ -20,11 +20,11 @@ public:
     void addCommondity(Commodity &cmdt);
     static int getSid(Store &sto);
     CommodityMap & getComMap();
-    int getCommodityNum();
-    int getSid();
+    int getCommodityNum() const ;
+    int getSid() const ;
     void setSid(int sid);
-    std::string getName();
-    std::string getPlat();
+    std::string getName() const;
+    std::string getPlat() const;
     void setName(const std::string &name);
     void setPlat(const std::string &plat);
 

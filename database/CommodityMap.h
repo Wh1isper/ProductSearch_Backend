@@ -19,7 +19,7 @@ public:
     bool remove(Commodity & cmdt);
     bool remove(int cid);
     bool update(Commodity &cmdt);
-    int getComNum();
+    int getComNum() const ;
     std::vector<Commodity> getComList();
 
 private:

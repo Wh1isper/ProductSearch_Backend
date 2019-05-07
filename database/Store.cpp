@@ -24,6 +24,7 @@ Store::Store(const std::string &name, const std::string &plat, CommodityMap &cmd
     setCommodityMap(cmdt);
     Sid = -1;
 }
+
 Store::Store(const std::string &name, const std::string &plat, Commodity &cmdt) {
     Name = name;
     Plat = plat;
@@ -37,18 +38,21 @@ void Store::setCommodityMap(CommodityMap &cmdt) {
         C.setSid(Sid);
     }
 }
+
 void Store::addCommondity(Commodity &cmdt) {
     cmdt.setSid(Sid);
     CmdtMap.insert(cmdt);
 }
+
 int Store::getSid(Store &sto) {
     return sto.Sid;
 }
-int Store::getCommodityNum() {
+
+int Store::getCommodityNum() const {
     return CmdtMap.getComNum();
 }
 
-int Store::getSid() {
+int Store::getSid() const {
     return Sid;
 }
 
@@ -56,21 +60,22 @@ void Store::setSid(int sid) {
     Sid = sid;
 }
 
-CommodityMap & Store::getComMap() {
+CommodityMap &Store::getComMap() {
     return CmdtMap;
 }
 
-std::string Store::getName() {
+std::string Store::getName() const {
     return Name;
 }
 
-std::string Store::getPlat() {
+std::string Store::getPlat() const {
     return Plat;
 }
 
 void Store::setName(const std::string &name) {
     Name = name;
 }
+
 void Store::setPlat(const std::string &plat) {
     Plat = plat;
 }
