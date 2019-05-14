@@ -1,4 +1,5 @@
 #include "Commodity.h"
+
 Commodity::Commodity() {
     Sid = -1;
     Name = "Unknown";
@@ -26,12 +27,15 @@ Commodity::Commodity(const std::string &name, float price, int sid) {
 int Commodity::getSid() {
     return Sid;
 }
+
 int Commodity::getCid() {
     return Cid;
 }
+
 void Commodity::setCid(int cid) {
     Cid = cid;
 }
+
 LabelList Commodity::getLabel() {
     return Label;
 }
@@ -40,8 +44,12 @@ std::string Commodity::getName() {
     return Name;
 }
 
-float Commodity::getPrice() {
+float Commodity::getPrice() const {
     return Price;
+}
+
+float Commodity::getPrice(const Commodity &C) {
+    return C.getPrice();
 }
 
 Commodity::Commodity(const std::string &name, float price, std::vector<std::string> &label, int sid) {
@@ -65,8 +73,11 @@ void Commodity::removeLabel(const std::string &lbl) {
 }
 
 void Commodity::addLabel(const std::vector<std::string> &lblList) {
-    for (const std::string &lbl:lblList)
-    {
+    for (const std::string &lbl:lblList) {
         Label.append(lbl);
     }
+}
+
+void Commodity::addLabel(const LabelList &lblList) {
+    Label.append(lblList);
 }

@@ -7,26 +7,24 @@ UserMap::UserMap() {
 }
 
 UserMap::UserMap(unsigned int max) {
-    maxUserNum = max < 100000000?100000000:max;
+    maxUserNum = max < 100000000 ? 100000000 : max;
     userNum = 1;
     Table = creatTable();
 }
 
-
-
-std::vector<UserMap::tableNode*> UserMap::creatTable() {
-    return std::vector<tableNode*>(maxUserNum);
+std::vector<UserMap::tableNode *> UserMap::creatTable() {
+    return std::vector<tableNode *>(maxUserNum);
 }
 
 bool UserMap::insert(User &user) {
     unsigned long pos = user.getUid();
-    if(!pos)
+    if (!pos)
         return false;
-    tableNode * Node = Table[pos];
-    while (Node){
-        if(Node->curUser == user)
+    tableNode *Node = Table[pos];
+    while (Node) {
+        if (Node->curUser == user)
             return false;
-        if(Node->Next)
+        if (Node->Next)
             Node = Node->Next;
         else
             Node->Next = new tableNode(user);
@@ -39,9 +37,9 @@ bool UserMap::findUser(User &user) {
     unsigned long pos = user.getUid();
     if (!pos)
         return false;
-    tableNode * Node = Table[pos];
-    while (Node){
-        if(Node->curUser == user)
+    tableNode *Node = Table[pos];
+    while (Node) {
+        if (Node->curUser == user)
             return true;
         else
             Node = Node->Next;
@@ -59,13 +57,13 @@ UserMap::tableNode::tableNode(const User &user) {
     Next = nullptr;
 }
 
-User& UserMap::getUser(const std::string &name) {
+User &UserMap::getUser(const std::string &name) {
     unsigned long pos = User::getUid(name);
-    if(!pos)
+    if (!pos)
         return Table[0]->curUser;
     tableNode *Node = Table[pos]->Next;
-    while (Node){
-        if(Node->curUser.getName() == name)
+    while (Node) {
+        if (Node->curUser.getName() == name)
             return Node->curUser;
         else
             Node = Node->Next;
@@ -75,17 +73,16 @@ User& UserMap::getUser(const std::string &name) {
 
 bool UserMap::remove(const User &user) {
     unsigned long pos = user.getUid();
-    if(!pos || !userNum)
+    if (!pos || !userNum)
         return false;
     tableNode *CurNode = Table[pos]->Next;
     tableNode *LastNode = Table[pos];
-    while (CurNode){
-        if(CurNode->curUser == user){
+    while (CurNode) {
+        if (CurNode->curUser == user) {
             LastNode->Next = CurNode->Next;
             --userNum;
             return true;
-        }
-        else{
+        } else {
             LastNode = CurNode;
             CurNode = CurNode->Next;
         }
@@ -95,17 +92,16 @@ bool UserMap::remove(const User &user) {
 
 bool UserMap::remove(const std::string &name) {
     unsigned long pos = User::getUid(name);
-    if(!pos||!userNum)
+    if (!pos || !userNum)
         return false;
     tableNode *CurNode = Table[pos]->Next;
     tableNode *LastNode = Table[pos];
-    while (CurNode){
-        if(CurNode->curUser.getName() == name){
+    while (CurNode) {
+        if (CurNode->curUser.getName() == name) {
             LastNode->Next = CurNode->Next;
             --userNum;
             return true;
-        }
-        else{
+        } else {
             LastNode = CurNode;
             CurNode = CurNode->Next;
         }
@@ -119,35 +115,15 @@ unsigned int UserMap::getUserNum() {
 
 bool UserMap::updateUser(User &user) {
     unsigned long pos = user.getUid();
-    if(!pos || !userNum)
+    if (!pos || !userNum)
         return false;
     tableNode *CurNode = Table[pos]->Next;
     tableNode *LastNode = Table[pos];
-    while (CurNode){
-        if(CurNode->curUser == user){
+    while (CurNode) {
+        if (CurNode->curUser == user) {
             CurNode->curUser = user;
             return true;
-        }
-        else{
-            LastNode = CurNode;
-            CurNode = CurNode->Next;
-        }
-    }
-    return false;
-}
-
-bool UserMap::updatePrfLabel(User &user, LabelList prfL) {
-    unsigned long pos = user.getUid();
-    if(!pos || !userNum)
-        return false;
-    tableNode *CurNode = Table[pos]->Next;
-    tableNode *LastNode = Table[pos];
-    while (CurNode){
-        if(CurNode->curUser == user){
-            CurNode->curUser.setLabelList(prfL);
-            return true;
-        }
-        else{
+        } else {
             LastNode = CurNode;
             CurNode = CurNode->Next;
         }

@@ -45,7 +45,6 @@ Commodity &CommodityMap::getCommodity(int cid) {
     return Table[cid];
 }
 
-
 int CommodityMap::getComNum() const {
     return comNum - 1;
 }
@@ -109,7 +108,6 @@ bool CommodityMap::update(Commodity &cmdt) {
     Table[cid] = cmdt;
     return true;
 }
-
 
 void CommodityMap::expanTable() {
     maxComNum *= 2;

@@ -1,5 +1,13 @@
 #include "operation.h"
 
+User craetUser(const std::string &name) {
+    return User(name);
+}
+
+User craetUser(const std::string &name, LabelList preList) {
+    return User(name, preList);
+}
+
 Commodity creatCommodity(const std::string &name, float price, LabelList &label, Store &Sto) {
     return Commodity(name, price, label, Sto.getSid());
 }
@@ -48,12 +56,12 @@ CommodityMap creatCommodityMap(Commodity &cmdt) {
     return CommodityMap(cmdt);
 }
 
-StoreMap readStoreMap(){
+StoreMap readStoreMap() {
     Util reader;
     return reader.readFiles();
 }
 
-bool saveStoreMap(StoreMap &SM){
+bool saveStoreMap(StoreMap &SM) {
     Util writer;
     return writer.saveFiles(SM);
 }
@@ -98,23 +106,26 @@ Store &addCommodity(StoreMap &SM, int sid, Commodity &C) {
     return S;
 }
 
-Store &delCommodity(StoreMap &SM, Store &S, Commodity& C){
+Store &delCommodity(StoreMap &SM, Store &S, Commodity &C) {
     S.getComMap().remove(C);
     SM.storeChanged(S.getSid());
     return S;
 }
-Store &delCommodity(StoreMap &SM, Store &S, int cid){
+
+Store &delCommodity(StoreMap &SM, Store &S, int cid) {
     S.getComMap().remove(cid);
     SM.storeChanged(S.getSid());
     return S;
 }
-Store &delCommodity(StoreMap &SM, int sid, Commodity& C){
+
+Store &delCommodity(StoreMap &SM, int sid, Commodity &C) {
     Store &S = SM.getStore(sid);
-    return delCommodity(SM,S,C);
+    return delCommodity(SM, S, C);
 }
-Store &delCommodity(StoreMap &SM, int sid, int cid){
+
+Store &delCommodity(StoreMap &SM, int sid, int cid) {
     Store &S = SM.getStore(sid);
-    return delCommodity(SM,S,cid);
+    return delCommodity(SM, S, cid);
 }
 
 Store &addLabel(StoreMap &SM, int sid, int cid, const std::string &label) {
@@ -212,37 +223,81 @@ bool delStore(StoreMap &SM, int sid) {
     return SM.remove(sid);
 }
 
+int registStore(StoreMap &SM, Store &S) {
+    SM.insert(S);
+    return S.getSid();
+}
+
+bool updateStore(StoreMap &SM, Store &S) {
+    SM.update(S);
+}
+
 const Commodity &getCommodity(Store S, ComInfo Info) {
-        return S.getComMap().getCommodity(Info.getCid());
+    return S.getComMap().getCommodity(Info.getCid());
 }
 
 const Commodity &getCommodity(StoreMap SMap, ComInfo Info) {
     return SMap.getStore(Info.getSid()).getComMap().getCommodity(Info.getCid());
 }
 
-std::vector<Commodity> searchCmdt(Label2Com index, StoreMap SMap, Label lbl){
+std::vector<Commodity> searchCmdt(Label2Com index, StoreMap SMap, Label lbl) {
     std::vector<ComInfo> Info = index.singleSearch(lbl);
     std::vector<Commodity> res;
-    for (const ComInfo &info:Info){
-        res.push_back(getCommodity(SMap,info));
+    for (const ComInfo &info:Info) {
+        res.push_back(getCommodity(SMap, info));
     }
     return res;
 }
-std::vector<Commodity> searchCmdt_single(Label2Com index, StoreMap SMap, LabelList lbl){
+
+std::vector<Commodity> searchCmdt_single(Label2Com index, StoreMap SMap, LabelList lbl) {
     std::vector<ComInfo> Info = index.singleSearch(lbl);
     std::vector<Commodity> res;
-    for (const ComInfo &info:Info){
-        res.push_back(getCommodity(SMap,info));
+    for (const ComInfo &info:Info) {
+        res.push_back(getCommodity(SMap, info));
     }
     return res;
 }
-std::vector<Commodity> searchCmdt_mult(Label2Com index, StoreMap SMap, LabelList lbl){
+
+std::vector<Commodity> searchCmdt_mult(Label2Com index, StoreMap SMap, LabelList lbl) {
     std::vector<std::vector<ComInfo>> InfoList = index.multSearch(lbl);
     std::vector<Commodity> res;
-    for (const std::vector<ComInfo> &curList:InfoList){
+    for (const std::vector<ComInfo> &curList:InfoList) {
         for (const ComInfo &info:curList) {
-            res.push_back(getCommodity(SMap,info));
+            res.push_back(getCommodity(SMap, info));
         }
     }
     return res;
+}
+
+User &updatePrfList(User &Usr, const Label &Lbl) {
+    Usr.updatePrfList(Lbl);
+}
+
+User &updatePrfList(User &Usr, const LabelList &Lbl) {
+    Usr.updatePrfList(Lbl);
+}
+
+bool updateUserMap(UserMap &UMap, User &User) {
+    return UMap.updateUser(User);
+}
+
+bool saveUserMap(UserMap &UMap) {
+    Util writer;
+    return writer.saveUserFiles(UMap);
+}
+
+User loginUser(UserMap &UMap, const std::string &name) {
+    return UMap.getUser(name);
+}
+
+bool removeUser(UserMap &UMap, const std::string &name) {
+    UMap.remove(name);
+}
+
+bool removeUser(UserMap &UMap, const User &usr) {
+    UMap.remove(usr);
+}
+
+User registUser(UserMap &UMap, User &usr) {
+    UMap.insert(usr);
 }

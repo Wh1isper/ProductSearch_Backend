@@ -31,6 +31,7 @@ Label2Com::Label2Com(StoreMap SM, unsigned int max) {
 }
 
 bool Label2Com::initialTable(StoreMap &SM) {
+    clear();
     return insertTable(SM);
 }
 
@@ -61,7 +62,7 @@ void Label2Com::ComInfo::SetCid(int cid) {
     Cid = cid;
 }
 
-void Label2Com::ComInfo::SetSid(int sid){
+void Label2Com::ComInfo::SetSid(int sid) {
     Sid = sid;
 }
 
@@ -69,7 +70,7 @@ bool Label2Com::ComInfo::operator==(const Label2Com::ComInfo &B) const {
     return (this->getSid() == B.getSid()) && (this->getCid() == B.getCid());
 }
 
-Label2Com::ComInfo& Label2Com::ComInfo::operator=(const Label2Com::ComInfo &B){
+Label2Com::ComInfo &Label2Com::ComInfo::operator=(const Label2Com::ComInfo &B) {
     this->Cid = B.getCid();
     this->Sid = B.getSid();
     return *this;
@@ -153,7 +154,6 @@ std::vector<Label2Com::ComInfo> Label2Com::TableNode::getComList() {
     }
     return res;
 }
-
 
 std::vector<Label2Com::TableNode> Label2Com::creatTable() {
     return std::vector<Label2Com::TableNode>(maxLabelNum);
@@ -288,21 +288,20 @@ std::vector<std::vector<Label2Com::ComInfo>> Label2Com::multSearch(LabelList &lb
         for (const std::vector<int> &list:sequence) {
             std::set<ComInfo> curSet;
             for (int i:list) {
-                if(curSet.empty())
+                if (curSet.empty())
                     curSet.insert(totSet[i].begin(), totSet[i].end());
-                else
-                {
+                else {
                     std::set<ComInfo> uniSet;
-                    std::set_intersection(totSet[i].begin(), totSet[i].end(),curSet.begin(),curSet.end(),
-                            std::inserter(uniSet,uniSet.begin()));
+                    std::set_intersection(totSet[i].begin(), totSet[i].end(), curSet.begin(), curSet.end(),
+                                          std::inserter(uniSet, uniSet.begin()));
                     curSet.clear();
-                    curSet.insert(uniSet.begin(),uniSet.end());
+                    curSet.insert(uniSet.begin(), uniSet.end());
                 }
             }
             std::set<ComInfo> diffSet;
-            std::set_difference(curSet.begin(),curSet.end(),usedSet.begin(),usedSet.end(),
-                    std::inserter(diffSet,diffSet.begin()));
-            usedSet.insert(diffSet.begin(),diffSet.end());
+            std::set_difference(curSet.begin(), curSet.end(), usedSet.begin(), usedSet.end(),
+                                std::inserter(diffSet, diffSet.begin()));
+            usedSet.insert(diffSet.begin(), diffSet.end());
             std::vector<Label2Com::ComInfo> curRes;
             for (ComInfo info:diffSet) {
                 curRes.push_back(info);

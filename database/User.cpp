@@ -12,7 +12,6 @@ User::User(const std::string &name) {
     setUid();
 }
 
-
 User::User(const std::string &name, LabelList &pre) {
     Uname = name;
     Prefer = pre;
@@ -28,7 +27,7 @@ unsigned long User::getUid() const {
 }
 
 unsigned long User::getUid(const std::string &name) {
-    return name == "Unknown"?0:hashFun(name);
+    return name == "Unknown" ? 0 : hashFun(name);
 }
 
 void User::setUid() {
@@ -37,15 +36,15 @@ void User::setUid() {
 
 unsigned long User::hashFun() const {
     unsigned long res = 0;
-    for (char s:Uname){
+    for (char s:Uname) {
         res += int(s);
     }
     return res;
 }
 
-unsigned long User::hashFun(const std::string &name){
+unsigned long User::hashFun(const std::string &name) {
     unsigned long res = 0;
-    for (char s:name){
+    for (char s:name) {
         res += int(s);
     }
     return res;
@@ -67,6 +66,14 @@ std::string User::getName() const {
 
 LabelList User::getPreferList() const {
     return Prefer;
+}
+
+void User::updatePrfList(const Label &L) {
+    Prefer.push_ahead(L);
+}
+
+void User::updatePrfList(const LabelList &L) {
+    Prefer.push_ahead(L);
 }
 
 void User::setLabelList(LabelList prf) {

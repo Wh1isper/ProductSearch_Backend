@@ -26,8 +26,8 @@ LabelList::LabelList(const Label &lbl) {
 
 LabelList::LabelList(std::vector<std::string> labelList) {
     L = new List();
-    List * pos = L;
-    for (const Label &L:labelList){
+    List *pos = L;
+    for (const Label &L:labelList) {
         pos->Next = new List(L);
         pos = pos->Next;
     }
@@ -35,10 +35,10 @@ LabelList::LabelList(std::vector<std::string> labelList) {
 
 bool LabelList::append(const Label &lbl) {
     List *Srch = L;
-    while (Srch->Next){
+    while (Srch->Next) {
         Srch = Srch->Next;
         if (Srch->Lbl == lbl)
-            return false;
+            return true;
     }
 
     Srch->Next = new List(lbl);
@@ -46,14 +46,8 @@ bool LabelList::append(const Label &lbl) {
 }
 
 bool LabelList::append(const LabelList &lst) {
-    List *Srch = L;
-    List *insrt = lst.L->Next;
-    while (Srch->Next)
-        Srch = Srch->Next;
-    while (insrt) {
-        Srch->Next = new List(insrt);
-        insrt = insrt->Next;
-        Srch = Srch->Next;
+    for (const Label &L:lst.getLabelList()) {
+        append(L);
     }
     return true;
 }
@@ -65,16 +59,14 @@ bool LabelList::remove(const Label &lbl) {
         tmp = Srch;
         Srch = Srch->Next;
     }
-    if(tmp != Srch){
+    if (tmp != Srch) {
         if (Srch) {
             tmp->Next = Srch->Next;
             delete Srch;
             return true;
-        }
-        else
+        } else
             return false;
-    }
-    else
+    } else
         return false;
 }
 
@@ -95,19 +87,19 @@ bool LabelList::pop() {
 
 
 bool LabelList::clear() {
-    List * Srch = L->Next;
+    List *Srch = L->Next;
     while (Srch->Next) {
-        List * tmp = Srch;
+        List *tmp = Srch;
         Srch = Srch->Next;
         delete tmp;
     }
-    if(Srch != L)
+    if (Srch != L)
         delete Srch;
     L->Next = nullptr;
     return true;
 }
 
-std::vector<Label> LabelList::getLabelList() {
+std::vector<Label> LabelList::getLabelList() const {
     std::vector<Label> res;
     List *Srch = L;
     while (Srch->Next) {
@@ -117,5 +109,21 @@ std::vector<Label> LabelList::getLabelList() {
     return res;
 }
 
+bool LabelList::push_ahead(const Label &lbl) {
+    remove(lbl);
+    List *insertList = new List(lbl);
+    List *Node = L;
+    while (insertList->Next)
+        insertList = insertList->Next;
+    insertList->Next = Node->Next;
+    Node->Next = insertList;
+    return true;
+}
 
+bool LabelList::push_ahead(const LabelList &lbl) {
+    for (const Label &l:lbl.getLabelList()) {
+        push_ahead(l);
+    }
+    return true;
+}
 

@@ -32,10 +32,11 @@ bool StoreMap::insert(Store &sto) {
         expanTable();
     return true;
 }
+
 bool StoreMap::update(Store &sto) {
     if (sto.getSid() == -1)
         return insert(sto);
-    if(sto.getSid() > maxStoreNum-1)
+    if (sto.getSid() > maxStoreNum - 1)
         return false;
     int sid = sto.getSid();
     Table[sid] = sto;
@@ -50,7 +51,7 @@ bool StoreMap::remove(int sid) {
         Table[sid] = Store();
         storeChanged(sid);
         storeNum -= 1;
-        if(storeNum < maxStoreNum/4)
+        if (storeNum < maxStoreNum / 4)
             shrinkTable();
         return true;
     } else
@@ -59,14 +60,14 @@ bool StoreMap::remove(int sid) {
 }
 
 bool StoreMap::remove(Store &sto) {
-    if(sto.getSid() == -1)
+    if (sto.getSid() == -1)
         return false;
     for (int i = 1; i < Table.size(); ++i) {
         if (Table[i].getSid() == sto.getSid()) {
             Table[i] = Store();
             storeChanged(sto.getSid());
             storeNum -= 1;
-            if(storeNum < maxStoreNum/4)
+            if (storeNum < maxStoreNum / 4)
                 shrinkTable();
             return true;
         }
@@ -79,8 +80,8 @@ int StoreMap::getStoreNum() {
 }
 
 Store &StoreMap::getStore(int sid) {
-    if (sid > maxStoreNum-1)
-        return Table[Table.size()-1];
+    if (sid > maxStoreNum - 1)
+        return Table[Table.size() - 1];
     return Table[sid];
 }
 
@@ -88,12 +89,19 @@ std::vector<Store> StoreMap::creatTable() {
     return std::vector<Store>(maxStoreNum);
 }
 
-std::vector <Store> StoreMap::getStoreList() {
-    return std::vector<Store>(Table);
+std::vector<Store> StoreMap::getStoreList() {
+    std::vector<Store> res;
+    for (Store &S:Table) {
+        if (S.getSid() != -1)
+            res.push_back(S);
+        if (res.size() == getStoreNum())
+            break;
+    }
+    return res;
 }
 
 std::vector<int> StoreMap::creatChangeStoreTable() {
-    return std::vector<int>(maxStoreNum,0);
+    return std::vector<int>(maxStoreNum, 0);
 }
 
 void StoreMap::storeChanged(int sid) {
@@ -107,8 +115,8 @@ void StoreMap::setStoreNum(unsigned int num) {
 std::vector<int> StoreMap::getChangedStore() {
     std::vector<int> ret(storeNum);
     unsigned int count = 0;
-    for (int i = 0; i < ChangeStore.size()-1; ++i) {
-        if(ChangeStore[i])
+    for (int i = 0; i < ChangeStore.size() - 1; ++i) {
+        if (ChangeStore[i])
             ret[count++] = i;
     }
     return ret;
@@ -127,12 +135,12 @@ void StoreMap::expanTable() {
 void StoreMap::shrinkTable() {
     int i = 1;
     int j = static_cast<int>(Table.size() - 1);
-    while(i<j){
-        while (Table[i].getSid() != -1 && i<j)
+    while (i < j) {
+        while (Table[i].getSid() != -1 && i < j)
             i++;
-        while (Table[j].getSid() == -1 && i<j)
+        while (Table[j].getSid() == -1 && i < j)
             j--;
-        if(i<j){
+        if (i < j) {
             Table[i] = Table[j];
             Table[j] = Store();
             Table[i].setSid(i);

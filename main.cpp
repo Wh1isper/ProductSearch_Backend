@@ -30,15 +30,19 @@ void Example_readAndEdit(){
     Util reader;
     StoreMap SM = reader.readFiles();
     int sid = 1;                                            // 假设要读取的sid为1
+
     Store S = SM.getStore(sid);
+
     Commodity C = creatCommodity("Comdity_name2", 2.22, S); // 再新建一个商品
     S = addCommodity(SM,S,C);
+
     S = addLabel(SM,S,C,"C2L2");                            //为商品添加标签
     S = delLabel(SM, S, 1,"L1");                            // 删除某个标签
     S = cancelAllChanges(SM,S);                             // 撤销所有操作，前提是未保存
     S = delLabel(SM, S, 1,"L1");
     if(saveAllchanges(SM))                                  // 保存
         std::cout << "不可逆保存" << std::endl;
+
 }
 
 // 调用举例3：倒排索引的创建与搜索
@@ -46,9 +50,11 @@ void Example_Search(){
     Util reader;
     StoreMap SM = reader.readFiles();
     Label2Com indexer(SM);                                         // 创建倒排索引
+
     std::vector<Commodity> singleLabelSearch = searchCmdt(indexer,SM,"Label0");
 
     LabelList L("Label1");L.append("Label0");L.append("Label4");L.append("Label8");
+
     std::vector<Commodity> accurateLabelSearch = searchCmdt_single(indexer,SM,L);
     std::vector<Commodity> multLabelSearch = searchCmdt_mult(indexer,SM,L);
     std::cout << "single search Num:" << singleLabelSearch.size() << std::endl;

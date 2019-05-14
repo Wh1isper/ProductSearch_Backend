@@ -58,6 +58,9 @@ int Store::getSid() const {
 
 void Store::setSid(int sid) {
     Sid = sid;
+    for (Commodity &C:getComMap().getComList()){
+        C.setSid(sid);
+    }
 }
 
 CommodityMap &Store::getComMap() {
