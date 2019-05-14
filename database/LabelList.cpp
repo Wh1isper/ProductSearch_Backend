@@ -55,6 +55,7 @@ bool LabelList::append(const LabelList &lst) {
         insrt = insrt->Next;
         Srch = Srch->Next;
     }
+    return true;
 }
 
 bool LabelList::remove(const Label &lbl) {

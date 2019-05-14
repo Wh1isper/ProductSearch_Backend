@@ -1,32 +1,76 @@
 #include "User.h"
 
 User::User() {
-    Uid = -1;
     Uname = "Unknown";
     Prefer = LabelList();
+    Uid = 0;
 }
 
 User::User(const std::string &name) {
-    Uid = -1;
     Uname = name;
     Prefer = LabelList();
+    setUid();
 }
 
 
 User::User(const std::string &name, LabelList &pre) {
-    Uid = -1;
     Uname = name;
     Prefer = pre;
+    setUid();
 }
 
-int User::getUid(User &user) {
+unsigned long User::getUid(User &user) {
     return user.Uid;
 }
 
-int User::getUid() {
+unsigned long User::getUid() const {
     return Uid;
 }
 
-void User::setUid(int uid) {
-    Uid = uid;
+unsigned long User::getUid(const std::string &name) {
+    return name == "Unknown"?0:hashFun(name);
 }
+
+void User::setUid() {
+    Uid = hashFun();
+}
+
+unsigned long User::hashFun() const {
+    unsigned long res = 0;
+    for (char s:Uname){
+        res += int(s);
+    }
+    return res;
+}
+
+unsigned long User::hashFun(const std::string &name){
+    unsigned long res = 0;
+    for (char s:name){
+        res += int(s);
+    }
+    return res;
+}
+
+User::User(const User &user) {
+    Uname = user.Uname;
+    Uid = user.Uid;
+    Prefer = user.Prefer;
+}
+
+bool User::operator==(const User &B) const {
+    return Uname == B.Uname;
+}
+
+std::string User::getName() const {
+    return Uname;
+}
+
+LabelList User::getPreferList() const {
+    return Prefer;
+}
+
+void User::setLabelList(LabelList prf) {
+    Prefer = prf;
+}
+
+

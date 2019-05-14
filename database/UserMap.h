@@ -2,7 +2,7 @@
  * 作者：Wh1isper at 2019-04-30
  * 说明：
  *      用户图，用于存储全部用户信息
- *      ！！注意：尚未开工
+ *      ！！注意：未经测试
 */
 
 #ifndef SOFTWARE_USERMAP_H
@@ -13,21 +13,32 @@
 
 class UserMap {
 public:
+    struct tableNode{
+        User curUser;
+        tableNode * Next;
+        tableNode();
+        explicit tableNode(const User & user);
+    };
     UserMap();
     explicit UserMap(unsigned int max);
     bool insert(User &user);
-    User & getUser(int uid);
-    bool remove(int uid);
-    bool remove(User &user);
-    int getUserNum();
-    bool update(User &user);
-    std::vector<User> getUserList();
-    
+    User & getUser(const std::string &name);
+    bool remove(const User &user);
+    bool remove(const std::string &name);
+    unsigned int getUserNum();
+    bool updateUser(User &user);
+    bool updatePrfLabel(User &user, LabelList prfL);
+    bool findUser(User &user);
+
+    std::vector<tableNode*> getTable();
+
 private:
     unsigned int maxUserNum;
     unsigned int userNum;
-    std::vector<User> Table;
-    std::vector<User> creatTable();
+
+
+    std::vector<tableNode*> Table;
+    std::vector<tableNode*> creatTable();
 };
 
 

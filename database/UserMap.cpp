@@ -1,84 +1,160 @@
 #include "UserMap.h"
 
 UserMap::UserMap() {
-    maxUserNum = 10;
+    maxUserNum = 100000000;
     userNum = 1;
     Table = creatTable();
 }
 
 UserMap::UserMap(unsigned int max) {
-    if (max < 2)
-        max = 2;
-    maxUserNum = max;
+    maxUserNum = max < 100000000?100000000:max;
     userNum = 1;
     Table = creatTable();
 }
 
+
+
+std::vector<UserMap::tableNode*> UserMap::creatTable() {
+    return std::vector<tableNode*>(maxUserNum);
+}
+
 bool UserMap::insert(User &user) {
-    if (user.getUid() != -1)
+    unsigned long pos = user.getUid();
+    if(!pos)
         return false;
-    int pos = 1;
-    while (Table[pos].getUid() != -1)
-        ++pos;
-
-    user.setUid(pos);
-    Table[pos] = user;
-    if (pos == userNum)
-        userNum += 1;
-    if (userNum + 1 >= maxUserNum) {
-        maxUserNum *= 2;
-        Table.resize(maxUserNum);
+    tableNode * Node = Table[pos];
+    while (Node){
+        if(Node->curUser == user)
+            return false;
+        if(Node->Next)
+            Node = Node->Next;
+        else
+            Node->Next = new tableNode(user);
     }
-    return true;
-}
-bool UserMap::update(User &user) {
-    if (user.getUid() == -1)
-        return false;
-    if(user.getUid() > maxUserNum-1)
-        return false;
-    Table[user.getUid()] = user;
+    ++userNum;
     return true;
 }
 
-bool UserMap::remove(int uid) {
-    if (uid > maxUserNum - 1)
+bool UserMap::findUser(User &user) {
+    unsigned long pos = user.getUid();
+    if (!pos)
         return false;
-    if (Table[uid].getUid() != -1) {
-        Table[uid] = User();
-        userNum -= 1;
-        return true;
-    } else
-        return false;
-
-}
-
-bool UserMap::remove(User &user) {
-    if(user.getUid() == -1)
-        return false;
-    for (int i = 1; i < Table.size(); ++i) {
-        if (Table[i].getUid() == user.getUid()) {
-            Table[i] = User();
-            userNum -= 1;
+    tableNode * Node = Table[pos];
+    while (Node){
+        if(Node->curUser == user)
             return true;
+        else
+            Node = Node->Next;
+    }
+    return false;
+}
+
+UserMap::tableNode::tableNode() {
+    curUser = User();
+    Next = nullptr;
+}
+
+UserMap::tableNode::tableNode(const User &user) {
+    curUser = user;
+    Next = nullptr;
+}
+
+User& UserMap::getUser(const std::string &name) {
+    unsigned long pos = User::getUid(name);
+    if(!pos)
+        return Table[0]->curUser;
+    tableNode *Node = Table[pos]->Next;
+    while (Node){
+        if(Node->curUser.getName() == name)
+            return Node->curUser;
+        else
+            Node = Node->Next;
+    }
+    return Table[0]->curUser;
+}
+
+bool UserMap::remove(const User &user) {
+    unsigned long pos = user.getUid();
+    if(!pos || !userNum)
+        return false;
+    tableNode *CurNode = Table[pos]->Next;
+    tableNode *LastNode = Table[pos];
+    while (CurNode){
+        if(CurNode->curUser == user){
+            LastNode->Next = CurNode->Next;
+            --userNum;
+            return true;
+        }
+        else{
+            LastNode = CurNode;
+            CurNode = CurNode->Next;
         }
     }
     return false;
 }
 
-int UserMap::getUserNum() {
-    return userNum - 1;
+bool UserMap::remove(const std::string &name) {
+    unsigned long pos = User::getUid(name);
+    if(!pos||!userNum)
+        return false;
+    tableNode *CurNode = Table[pos]->Next;
+    tableNode *LastNode = Table[pos];
+    while (CurNode){
+        if(CurNode->curUser.getName() == name){
+            LastNode->Next = CurNode->Next;
+            --userNum;
+            return true;
+        }
+        else{
+            LastNode = CurNode;
+            CurNode = CurNode->Next;
+        }
+    }
+    return false;
 }
 
-User &UserMap::getUser(int uid) {
-    if (uid > uid-1)
-        return Table[uid-1];
-    return Table[uid];
+unsigned int UserMap::getUserNum() {
+    return userNum;
 }
 
-std::vector<User> UserMap::creatTable() {
-    return std::vector<User>(maxUserNum);
+bool UserMap::updateUser(User &user) {
+    unsigned long pos = user.getUid();
+    if(!pos || !userNum)
+        return false;
+    tableNode *CurNode = Table[pos]->Next;
+    tableNode *LastNode = Table[pos];
+    while (CurNode){
+        if(CurNode->curUser == user){
+            CurNode->curUser = user;
+            return true;
+        }
+        else{
+            LastNode = CurNode;
+            CurNode = CurNode->Next;
+        }
+    }
+    return false;
 }
 
-std::vector<User> UserMap::getUserList() {
-    return std::vector<User>(Table);
+bool UserMap::updatePrfLabel(User &user, LabelList prfL) {
+    unsigned long pos = user.getUid();
+    if(!pos || !userNum)
+        return false;
+    tableNode *CurNode = Table[pos]->Next;
+    tableNode *LastNode = Table[pos];
+    while (CurNode){
+        if(CurNode->curUser == user){
+            CurNode->curUser.setLabelList(prfL);
+            return true;
+        }
+        else{
+            LastNode = CurNode;
+            CurNode = CurNode->Next;
+        }
+    }
+    return false;
+}
+
+std::vector<UserMap::tableNode *> UserMap::getTable() {
+    return Table;
 }

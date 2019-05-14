@@ -134,3 +134,54 @@ bool Util::updateFileList(std::vector<int> &List){
     }
     return true;
 }
+
+UserMap Util::loadUserFiles() {
+    UserMap UM;
+    std::string filepath;
+    filepath = USERPATH;
+    std::ifstream fin(filepath, std::fstream::in);
+    if(!fin)
+        return UM;
+    while (!fin.eof()){
+        std::string name;
+        Label L;
+        LabelList List;
+        fin >> name;
+        unsigned int labelNum;
+        fin >> labelNum;
+        for (int i = 0; i < labelNum; ++i) {
+            fin >> L;
+            List.append(L);
+        }
+        User U(name,List);
+        UM.insert(U);
+    }
+    return UM;
+
+}
+
+bool Util::saveUserFiles(UserMap &UM) {
+    for (UserMap::tableNode *Node:UM.getTable()){
+        Node = Node->Next;
+        while (Node){
+            saveUser(Node->curUser);
+            Node = Node->Next;
+        }
+    }
+    return true;
+}
+
+bool Util::saveUser(User U) {
+    std::string filepath;
+    filepath = USERPATH;
+    std::ofstream fout(filepath, std::fstream::out);
+    if(!fout)
+        return false;
+    fout << U.getName();
+    std::vector<Label> List = U.getPreferList().getLabelList();
+    fout << List.size();
+    for (const Label &L:List)
+        fout<< ' '+L;
+    fout << std::endl;
+    return true;
+}

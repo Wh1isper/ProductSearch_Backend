@@ -2,7 +2,7 @@
  * 作者：Wh1isper at 2019-04-30
  * 说明：
  *      存储用户信息和偏好
- *      ！！注意：尚未开工
+ *      ！！注意：未经测试
 */
 
 #ifndef SOFTWARE_USER_H
@@ -13,13 +13,21 @@
 class User {
 public:
     User();
-    User(const std::string &name);
+    explicit User(const std::string &name);
+    User(const User &user);
     User(const std::string &name, LabelList &pre);
-    static int getUid(User &ur);
-    int getUid();
-    void setUid(int uid);
+    static unsigned long getUid(User &ur);
+    static unsigned long getUid(const std::string &name) ;
+    void setUid();
+    unsigned long getUid() const ;
+    bool operator == (const User &B) const;
+    unsigned long hashFun() const ;
+    static unsigned long hashFun(const std::string &name);
+    std::string getName() const;
+    LabelList getPreferList() const;
+    void setLabelList(LabelList prf);
 private:
-    int Uid;
+    unsigned long Uid;
     std::string Uname;
     LabelList Prefer;
 };
