@@ -98,6 +98,25 @@ Store &addCommodity(StoreMap &SM, int sid, Commodity &C) {
     return S;
 }
 
+Store &delCommodity(StoreMap &SM, Store &S, Commodity& C){
+    S.getComMap().remove(C);
+    SM.storeChanged(S.getSid());
+    return S;
+}
+Store &delCommodity(StoreMap &SM, Store &S, int cid){
+    S.getComMap().remove(cid);
+    SM.storeChanged(S.getSid());
+    return S;
+}
+Store &delCommodity(StoreMap &SM, int sid, Commodity& C){
+    Store &S = SM.getStore(sid);
+    return delCommodity(SM,S,C);
+}
+Store &delCommodity(StoreMap &SM, int sid, int cid){
+    Store &S = SM.getStore(sid);
+    return delCommodity(SM,S,cid);
+}
+
 Store &addLabel(StoreMap &SM, int sid, int cid, const std::string &label) {
     Commodity &C = SM.getStore(sid).getComMap().getCommodity(cid);
     C.addLabel(label);

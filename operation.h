@@ -2,7 +2,6 @@
  * 作者：Wh1isper at 2019-04-30
  * 说明：
  *      api封装函数
- *      ！！注意：这里的函数将被重构以对应api封装
 */
 
 #ifndef SOFTWARE_OPERATION_H
@@ -43,6 +42,11 @@ Store &addCommodity(StoreMap &SM, Store &S, Commodity &C, const std::string &lab
 Store &addCommodity(StoreMap &SM, int sid, Commodity &C, const std::string &label);
 Store &addCommodity(StoreMap &SM, Store &S, Commodity &C, const std::vector<std::string> &lblList);
 Store &addCommodity(StoreMap &SM, int sid, Commodity &C, const std::vector<std::string> &lblList);
+
+Store &delCommodity(StoreMap &SM, Store &S, Commodity& C);
+Store &delCommodity(StoreMap &SM, Store &S, int cid);
+Store &delCommodity(StoreMap &SM, int sid, Commodity& C);
+Store &delCommodity(StoreMap &SM, int sid, int cid);
 
 
 Store &addLabel(StoreMap &SM, int sid, int cid, const std::string &label);
