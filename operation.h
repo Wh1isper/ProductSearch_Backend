@@ -18,9 +18,9 @@ typedef std::string Label;
 
 // -----------------------------------基本的类操作---------------------------------------------
 // 创建用户
-User craetUser(const std::string &name);
+User creatUser(const std::string &name);
 
-User craetUser(const std::string &name, LabelList preList);
+User creatUser(const std::string &name, LabelList preList);
 
 // 创建用户图，可选max为分配的哈希表长度
 UserMap creatUserMap();
@@ -148,6 +148,9 @@ std::vector<Commodity> searchCmdt_single(Label2Com index, StoreMap SMap, LabelLi
 
 // 模糊查找
 std::vector<Commodity> searchCmdt_mult(Label2Com index, StoreMap SMap, LabelList lbl);
+
+// 设置用户喜好表
+User &setPrfList(User &Usr, const LabelList &Lbl);
 
 // 更新用户喜好表
 User &updatePrfList(User &Usr, const Label &Lbl);

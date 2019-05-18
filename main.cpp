@@ -4,10 +4,13 @@
 void Example_initial();
 void Example_readAndEdit();
 void Example_Search();
+void Example_User();
 int main() {
     //Example_initial();
-   // Example_readAndEdit();
-    Example_Search();
+    //Example_readAndEdit();
+    //Example_Search();
+    //Example_User();
+
     return 0;
 }
 
@@ -60,4 +63,29 @@ void Example_Search(){
     std::cout << "single search Num:" << singleLabelSearch.size() << std::endl;
     std::cout << "accurate search Num:" << accurateLabelSearch.size() << std::endl;
     std::cout << "mult search Num:" << multLabelSearch.size() << std::endl;
+}
+
+void Example_User(){
+    User usr = creatUser("name");   // 创建新用户
+    LabelList lst;
+    lst.append("L1");
+
+    usr.updatePrfList(lst);         // 插入一个标签
+    updatePrfList(usr,lst);         // 与上同
+
+    usr.setLabelList(lst);          // 初始化标签列表
+    setPrfList(usr,lst);            // 与上同
+
+    UserMap UM;                     // 将用户置入图
+    UM.insert(usr);
+    UM.updateUser(usr);
+    UM.remove(usr);
+
+    Util W;
+    W.saveUserFiles(UM);                    // 不可逆保存
+    Util R;
+    UserMap ReadUM = R.loadUserFiles();     // 读取图
+
+    User getusr = ReadUM.getUser("name");   // 读取图中用户
+
 }

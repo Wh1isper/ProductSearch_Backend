@@ -156,7 +156,10 @@ UserMap Util::loadUserFiles() {
 }
 
 bool Util::saveUserFiles(UserMap &UM) {
+    std::remove(USERPATH);
     for (UserMap::tableNode *Node:UM.getTable()) {
+        if(!Node)
+            continue;
         Node = Node->Next;
         while (Node) {
             saveUser(Node->curUser);
@@ -172,11 +175,12 @@ bool Util::saveUser(User U) {
     std::ofstream fout(filepath, std::fstream::out|std::fstream::app);
     if (!fout)
         return false;
-    fout << U.getName();
+    fout << U.getName() << " ";
     std::vector<Label> List = U.getPreferList().getLabelList();
     fout << List.size();
     for (const Label &L:List)
         fout << ' ' + L;
     fout << std::endl;
+    fout.close();
     return true;
 }

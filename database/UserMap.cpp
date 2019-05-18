@@ -2,13 +2,13 @@
 
 UserMap::UserMap() {
     maxUserNum = 100000000;
-    userNum = 1;
+    userNum = 0;
     Table = creatTable();
 }
 
 UserMap::UserMap(unsigned int max) {
     maxUserNum = max < 100000000 ? 100000000 : max;
-    userNum = 1;
+    userNum = 0;
     Table = creatTable();
 }
 
@@ -20,15 +20,18 @@ bool UserMap::insert(User &user) {
     unsigned long pos = user.getUid();
     if (!pos)
         return false;
+    if(!Table[pos])
+        Table[pos] = new tableNode();
     tableNode *Node = Table[pos];
-    while (Node) {
+    while (Node->Next) {
         if (Node->curUser == user)
             return false;
-        if (Node->Next)
-            Node = Node->Next;
-        else
-            Node->Next = new tableNode(user);
+        Node = Node->Next;
     }
+    if (Node->curUser == user)
+        return false;
+    else
+        Node->Next = new tableNode(user);
     ++userNum;
     return true;
 }

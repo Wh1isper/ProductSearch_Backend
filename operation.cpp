@@ -1,11 +1,19 @@
 #include "operation.h"
 
-User craetUser(const std::string &name) {
+User creatUser(const std::string &name) {
     return User(name);
 }
 
-User craetUser(const std::string &name, LabelList preList) {
+User creatUser(const std::string &name, LabelList preList) {
     return User(name, preList);
+}
+
+UserMap creatUserMap(){
+    return UserMap();
+}
+
+UserMap creatUserMap(unsigned long max){
+    return UserMap(max);
 }
 
 Commodity creatCommodity(const std::string &name, float price, LabelList &label, Store &Sto) {
@@ -73,7 +81,6 @@ bool isStore(Store &sto) {
 bool isCommodity(Commodity &cmdt) {
     return cmdt.getSid() != -1;
 }
-
 
 Store &addCommodity(StoreMap &SM, Store &S, Commodity &C) {
     return addCommodity(SM, S.getSid(), C);
@@ -267,6 +274,11 @@ std::vector<Commodity> searchCmdt_mult(Label2Com index, StoreMap SMap, LabelList
         }
     }
     return res;
+}
+
+
+User &setPrfList(User &Usr, const LabelList &Lbl){
+    Usr.setLabelList(Lbl);
 }
 
 User &updatePrfList(User &Usr, const Label &Lbl) {
