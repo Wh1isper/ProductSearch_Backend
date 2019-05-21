@@ -247,7 +247,7 @@ const Commodity &getCommodity(StoreMap SMap, ComInfo Info) {
     return SMap.getStore(Info.getSid()).getComMap().getCommodity(Info.getCid());
 }
 
-std::vector<Commodity> searchCmdt(Label2Com index, StoreMap SMap, Label lbl) {
+std::vector<Commodity> searchCmdt(Label2Com &index, StoreMap &SMap, Label lbl) {
     std::vector<ComInfo> Info = index.singleSearch(lbl);
     std::vector<Commodity> res;
     for (const ComInfo &info:Info) {
@@ -256,7 +256,7 @@ std::vector<Commodity> searchCmdt(Label2Com index, StoreMap SMap, Label lbl) {
     return res;
 }
 
-std::vector<Commodity> searchCmdt_single(Label2Com index, StoreMap SMap, LabelList lbl) {
+std::vector<Commodity> searchCmdt_single(Label2Com &index, StoreMap &SMap, LabelList &lbl) {
     std::vector<ComInfo> Info = index.singleSearch(lbl);
     std::vector<Commodity> res;
     for (const ComInfo &info:Info) {
@@ -265,7 +265,7 @@ std::vector<Commodity> searchCmdt_single(Label2Com index, StoreMap SMap, LabelLi
     return res;
 }
 
-std::vector<Commodity> searchCmdt_mult(Label2Com index, StoreMap SMap, LabelList lbl) {
+std::vector<Commodity> searchCmdt_mult(Label2Com &index, StoreMap &SMap, LabelList &lbl) {
     std::vector<std::vector<ComInfo>> InfoList = index.multSearch(lbl);
     std::vector<Commodity> res;
     for (const std::vector<ComInfo> &curList:InfoList) {

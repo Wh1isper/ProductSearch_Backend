@@ -141,13 +141,13 @@ const Commodity &getCommodity(StoreMap SMap, ComInfo Info);
 const Commodity &getCommodity(Store S, ComInfo Info);
 
 // 单标签搜索
-std::vector<Commodity> searchCmdt(Label2Com index, StoreMap SMap, Label lbl);
+std::vector<Commodity> searchCmdt(Label2Com &index, StoreMap &SMap, Label lbl);
 
 // 精确查找，所有标签交集
-std::vector<Commodity> searchCmdt_single(Label2Com index, StoreMap SMap, LabelList lbl);
+std::vector<Commodity> searchCmdt_single(Label2Com &index, StoreMap &SMap, LabelList &lbl);
 
 // 模糊查找
-std::vector<Commodity> searchCmdt_mult(Label2Com index, StoreMap SMap, LabelList lbl);
+std::vector<Commodity> searchCmdt_mult(Label2Com &index, StoreMap &SMap, LabelList &lbl);
 
 // 设置用户喜好表
 User &setPrfList(User &Usr, const LabelList &Lbl);
