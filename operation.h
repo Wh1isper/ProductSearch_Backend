@@ -167,7 +167,7 @@ bool saveUserMap(UserMap &UMap);
 User loginUser(UserMap &UMap, const std::string &name);
 
 // 用户注册
-User registUser(UserMap &UMap, User &usr);
+bool registUser(UserMap &UMap, User &usr);
 
 // 用户销号
 bool removeUser(UserMap &UMap, const std::string &name);

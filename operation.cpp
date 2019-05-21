@@ -279,14 +279,17 @@ std::vector<Commodity> searchCmdt_mult(Label2Com &index, StoreMap &SMap, LabelLi
 
 User &setPrfList(User &Usr, const LabelList &Lbl){
     Usr.setLabelList(Lbl);
+    return Usr;
 }
 
 User &updatePrfList(User &Usr, const Label &Lbl) {
     Usr.updatePrfList(Lbl);
+    return Usr;
 }
 
 User &updatePrfList(User &Usr, const LabelList &Lbl) {
     Usr.updatePrfList(Lbl);
+    return Usr;
 }
 
 bool updateUserMap(UserMap &UMap, User &User) {
@@ -303,13 +306,13 @@ User loginUser(UserMap &UMap, const std::string &name) {
 }
 
 bool removeUser(UserMap &UMap, const std::string &name) {
-    UMap.remove(name);
+    return UMap.remove(name);
 }
 
 bool removeUser(UserMap &UMap, const User &usr) {
-    UMap.remove(usr);
+    return UMap.remove(usr);
 }
 
-User registUser(UserMap &UMap, User &usr) {
-    UMap.insert(usr);
+bool registUser(UserMap &UMap, User &usr) {
+    return UMap.insert(usr);
 }
