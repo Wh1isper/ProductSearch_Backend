@@ -150,6 +150,7 @@ bool updateStoreUserMap(UserMap &UMap, User &User);
 // 保存用户图
 bool saveStoreUserMap(UserMap &UMap);
 
+// 载入用户图
 UserMap loadStoreUserMap();
 
 // 用户登入成功，返回用户信息
@@ -193,7 +194,6 @@ bool updateUserMap(UserMap &UMap, User &User);
 bool saveUserMap(UserMap &UMap);
 
 // 加载用户图
-
 UserMap loadUserMap();
 
 // 用户登入成功，返回用户信息

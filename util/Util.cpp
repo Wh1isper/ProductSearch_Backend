@@ -222,7 +222,7 @@ bool Util::saveStoreUserFiles(UserMap &UM) {
             continue;
         Node = Node->Next;
         while (Node) {
-            saveUser(Node->curUser);
+            saveStoreUser(Node->curUser);
             Node = Node->Next;
         }
     }
