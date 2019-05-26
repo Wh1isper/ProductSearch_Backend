@@ -10,7 +10,11 @@ int main() {
     //Example_readAndEdit();
     //Example_Search();
     //Example_User();
-
+    User usr = creatUser("name");
+    User usr2 = creatUser("name");
+    UserMap UM;
+    bool flag1 = UM.insert(usr);
+    bool flag2 = UM.insert(usr2);
     return 0;
 }
 
@@ -56,7 +60,7 @@ void Example_Search(){
 
     std::vector<Commodity> singleLabelSearch = searchCmdt(indexer,SM,"Label0");
 
-    LabelList L("Label1");L.append("Label0");L.append("Label4");L.append("Label8");
+    LabelList L("Label1");L.append("Label0");
 
     std::vector<Commodity> accurateLabelSearch = searchCmdt_single(indexer,SM,L);
     std::vector<Commodity> multLabelSearch = searchCmdt_mult(indexer,SM,L);

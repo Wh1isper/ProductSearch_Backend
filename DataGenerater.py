@@ -3,7 +3,7 @@ import random
 
 
 class Generater():
-    def __init__(self, path="./Cache", StoreNum=100, ComNum=100, LabelNum=10, drop=0.5):
+    def __init__(self, StoreNum=100, ComNum=100, LabelNum=10, drop=0.5, path="./Cache"):
         self.DROP = drop
         self.PATH = path
         self.STORENUM = StoreNum
@@ -49,7 +49,7 @@ class Generater():
                     f.write(self.Com[i][j][1] + '\n')
                     f.write(repr(i + 1) + '\n')
                     f.write(repr(j + 1) + '\n')
-                    label = self.Label[random.randint(0, 9)]
+                    label = self.Label[random.randint(0, self.LABELNUM-1)]
                     f.write(repr(len(label)) + '\n')
                     for L in label:
                         f.write(L + '\n')

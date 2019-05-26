@@ -8,6 +8,10 @@ User creatUser(const std::string &name, LabelList preList) {
     return User(name, preList);
 }
 
+User creatUser(const std::string &name, const std::string &pwd, LabelList preList){
+    return User(name,pwd,preList);
+}
+
 UserMap creatUserMap(){
     return UserMap();
 }
@@ -247,7 +251,7 @@ const Commodity &getCommodity(StoreMap SMap, ComInfo Info) {
     return SMap.getStore(Info.getSid()).getComMap().getCommodity(Info.getCid());
 }
 
-std::vector<Commodity> searchCmdt(Label2Com &index, StoreMap &SMap, Label lbl) {
+std::vector<Commodity> searchCmdt(Label2Com &index, StoreMap &SMap, const Label &lbl) {
     std::vector<ComInfo> Info = index.singleSearch(lbl);
     std::vector<Commodity> res;
     for (const ComInfo &info:Info) {
@@ -301,6 +305,11 @@ bool saveUserMap(UserMap &UMap) {
     return writer.saveUserFiles(UMap);
 }
 
+UserMap loadUserMap(){
+    Util reader;
+    return reader.loadUserFiles();
+}
+
 User loginUser(UserMap &UMap, const std::string &name) {
     return UMap.getUser(name);
 }
@@ -314,5 +323,47 @@ bool removeUser(UserMap &UMap, const User &usr) {
 }
 
 bool registUser(UserMap &UMap, User &usr) {
+    return UMap.insert(usr);
+}
+
+User addStore(User &U,StoreMap &SM, Store &S){
+    SM.insert(S);
+    U.addStore(S);
+    return U;
+}
+
+User delStore(User &U,StoreMap &SM, Store &S){
+    U.removeStore(S);
+    SM.remove(S);
+    return U;
+}
+
+bool updateStoreUserMap(UserMap &UMap, User &User) {
+    return UMap.updateUser(User);
+}
+
+bool saveStoreUserMap(UserMap &UMap) {
+    Util writer;
+    return writer.saveStoreUserFiles(UMap);
+}
+
+UserMap loadStoreUserMap(){
+    Util reader;
+    return reader.loadStoreUserFiles();
+}
+
+User loginStoreUser(UserMap &UMap, const std::string &name) {
+    return UMap.getUser(name);
+}
+
+bool removeStoreUser(UserMap &UMap, const std::string &name) {
+    return UMap.remove(name);
+}
+
+bool removeStoreUser(UserMap &UMap, const User &usr) {
+    return UMap.remove(usr);
+}
+
+bool registStoreUser(UserMap &UMap, User &usr) {
     return UMap.insert(usr);
 }

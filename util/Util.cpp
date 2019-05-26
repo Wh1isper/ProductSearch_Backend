@@ -6,7 +6,7 @@
 
 StoreMap Util::readFiles() {
     std::vector<int> sidList;
-    std::ifstream fin(LISTPATH, std::ifstream::in);
+    std::ifstream fin(LIST_PATH, std::ifstream::in);
     std::string buffer;
     if (!fin)
         return StoreMap();
@@ -31,7 +31,7 @@ StoreMap Util::readFiles() {
 
 Store Util::readFile(int sid) {
     std::string filepath;
-    filepath = DATAPATH + std::to_string(sid) + ".pds";
+    filepath = DATA_PATH + std::to_string(sid) + ".pds";
     std::ifstream fin(filepath, std::fstream::in | std::fstream::binary);
     Store S;
     if (!fin)
@@ -67,7 +67,7 @@ Store Util::readFile(int sid) {
 
 bool Util::saveFile(Store &S) {
     std::string filepath;
-    filepath = DATAPATH + std::to_string(S.getSid()) + ".pds";
+    filepath = DATA_PATH + std::to_string(S.getSid()) + ".pds";
     std::ofstream fout(filepath, std::fstream::out);
     if (!fout)
         return false;
@@ -121,7 +121,7 @@ void Util::setUnchanged(StoreMap &SM, int curSid) {
 }
 
 bool Util::updateFileList(std::vector<int> &List) {
-    std::ofstream fout(LISTPATH, std::fstream::out);
+    std::ofstream fout(LIST_PATH, std::fstream::out);
     if (!fout)
         return false;
     for (int sid:List) {
@@ -133,22 +133,24 @@ bool Util::updateFileList(std::vector<int> &List) {
 UserMap Util::loadUserFiles() {
     UserMap UM;
     std::string filepath;
-    filepath = USERPATH;
+    filepath = USER_PATH;
     std::ifstream fin(filepath, std::fstream::in);
     if (!fin)
         return UM;
     while (!fin.eof()) {
         std::string name;
+        std::string pwd;
         Label L;
         LabelList List;
         fin >> name;
+        fin >> pwd;
         unsigned int labelNum;
         fin >> labelNum;
         for (int i = 0; i < labelNum; ++i) {
             fin >> L;
             List.append(L);
         }
-        User U(name, List);
+        User U(name, pwd, List, true);
         UM.insert(U);
     }
     return UM;
@@ -156,7 +158,7 @@ UserMap Util::loadUserFiles() {
 }
 
 bool Util::saveUserFiles(UserMap &UM) {
-    std::remove(USERPATH);
+    std::remove(USER_PATH);
     for (UserMap::tableNode *Node:UM.getTable()) {
         if(!Node)
             continue;
@@ -169,13 +171,72 @@ bool Util::saveUserFiles(UserMap &UM) {
     return true;
 }
 
-bool Util::saveUser(User U) {
+bool Util::saveUser(const User &U) {
     std::string filepath;
-    filepath = USERPATH;
+    filepath = USER_PATH;
     std::ofstream fout(filepath, std::fstream::out|std::fstream::app);
     if (!fout)
         return false;
     fout << U.getName() << " ";
+    fout << U.getUndecodePassword() << " ";
+    std::vector<Label> List = U.getPreferList().getLabelList();
+    fout << List.size();
+    for (const Label &L:List)
+        fout << ' ' + L;
+    fout << std::endl;
+    fout.close();
+    return true;
+}
+
+UserMap Util::loadStoreUserFiles() {
+    UserMap UM;
+    std::string filepath;
+    filepath = STORE_USER_PATH;
+    std::ifstream fin(filepath, std::fstream::in);
+    if (!fin)
+        return UM;
+    while (!fin.eof()) {
+        std::string name;
+        std::string pwd;
+        Label L;
+        LabelList List;
+        fin >> name;
+        fin >> pwd;
+        unsigned int labelNum;
+        fin >> labelNum;
+        for (int i = 0; i < labelNum; ++i) {
+            fin >> L;
+            List.append(L);
+        }
+        User U(name, pwd, List, true);
+        UM.insert(U);
+    }
+    return UM;
+
+}
+
+bool Util::saveStoreUserFiles(UserMap &UM) {
+    std::remove(STORE_USER_PATH);
+    for (UserMap::tableNode *Node:UM.getTable()) {
+        if(!Node)
+            continue;
+        Node = Node->Next;
+        while (Node) {
+            saveUser(Node->curUser);
+            Node = Node->Next;
+        }
+    }
+    return true;
+}
+
+bool Util::saveStoreUser(const User &U) {
+    std::string filepath;
+    filepath = STORE_USER_PATH;
+    std::ofstream fout(filepath, std::fstream::out|std::fstream::app);
+    if (!fout)
+        return false;
+    fout << U.getName() << " ";
+    fout << U.getUndecodePassword() << " ";
     std::vector<Label> List = U.getPreferList().getLabelList();
     fout << List.size();
     for (const Label &L:List)

@@ -22,6 +22,8 @@ User creatUser(const std::string &name);
 
 User creatUser(const std::string &name, LabelList preList);
 
+User creatUser(const std::string &name, const std::string &pwd, LabelList preList);
+
 // 创建用户图，可选max为分配的哈希表长度
 UserMap creatUserMap();
 
@@ -122,17 +124,44 @@ bool saveAllchanges(StoreMap &SM);
 // 加载商户图并返回某个商户
 Store loadStore(StoreMap &SM, int sid);
 
-// -----------------------------------商户用户操作---------------------------------------------
-// 商户注册 返回sid
+// -----------------------------------商店操作---------------------------------------------
+// 商店创建 返回sid
 int registStore(StoreMap &SM, Store &S);
 
-// 销号商户
+// 删除商店
 bool delStore(StoreMap &SM, Store &S);
 
 bool delStore(StoreMap &SM, int sid);
 
-// 更新商户信息
+// 更新商店信息
 bool updateStore(StoreMap &SM, Store &S);
+
+// -----------------------------------商户用户操作---------------------------------------------
+
+// 新建商店
+User addStore(User &UM,StoreMap &SM, Store &S);
+
+// 删除商店
+User delStore(User &UM,StoreMap &SM, Store &S);
+
+// 更新用户图
+bool updateStoreUserMap(UserMap &UMap, User &User);
+
+// 保存用户图
+bool saveStoreUserMap(UserMap &UMap);
+
+UserMap loadStoreUserMap();
+
+// 用户登入成功，返回用户信息
+User loginStoreUser(UserMap &UMap, const std::string &name);
+
+// 用户注册
+bool registStoreUser(UserMap &UMap, User &usr);
+
+// 用户销号
+bool removeStoreUser(UserMap &UMap, const std::string &name);
+
+bool removeStoreUser(UserMap &UMap, const User &usr);
 
 // -----------------------------普通用户搜索、注册、登入、销号操作------------------------------
 // 由商品检索信息获得商品
@@ -141,7 +170,7 @@ const Commodity &getCommodity(StoreMap SMap, ComInfo Info);
 const Commodity &getCommodity(Store S, ComInfo Info);
 
 // 单标签搜索
-std::vector<Commodity> searchCmdt(Label2Com &index, StoreMap &SMap, Label lbl);
+std::vector<Commodity> searchCmdt(Label2Com &index, StoreMap &SMap, const Label &lbl);
 
 // 精确查找，所有标签交集
 std::vector<Commodity> searchCmdt_single(Label2Com &index, StoreMap &SMap, LabelList &lbl);
@@ -162,6 +191,10 @@ bool updateUserMap(UserMap &UMap, User &User);
 
 // 保存用户图
 bool saveUserMap(UserMap &UMap);
+
+// 加载用户图
+
+UserMap loadUserMap();
 
 // 用户登入成功，返回用户信息
 User loginUser(UserMap &UMap, const std::string &name);
