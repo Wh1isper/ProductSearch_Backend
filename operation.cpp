@@ -8,15 +8,15 @@ User creatUser(const std::string &name, LabelList preList) {
     return User(name, preList);
 }
 
-User creatUser(const std::string &name, const std::string &pwd, LabelList preList){
-    return User(name,pwd,preList);
+User creatUser(const std::string &name, const std::string &pwd, LabelList preList) {
+    return User(name, pwd, preList);
 }
 
-UserMap creatUserMap(){
+UserMap creatUserMap() {
     return UserMap();
 }
 
-UserMap creatUserMap(unsigned long max){
+UserMap creatUserMap(unsigned long max) {
     return UserMap(max);
 }
 
@@ -280,8 +280,27 @@ std::vector<Commodity> searchCmdt_mult(Label2Com &index, StoreMap &SMap, LabelLi
     return res;
 }
 
+std::vector<Commodity> randomSearch(Label2Com &index, StoreMap &SMap, User &U) {
+    LabelList List = U.getPreferList();
+    std::vector<Commodity> res;
+    double decracePossibility = 0.5; // 初始为概率为0.5 按0.1递减
+    for (const Label &L:List.getLabelList()) {
+        std::vector<ComInfo> InfoList = index.singleSearch(L);
+        for (const ComInfo &info:InfoList) {
+            if (rand() / double(RAND_MAX) > decracePossibility) {
+                res.push_back(getCommodity(SMap, info));
+                if (res.size() == 100)
+                    return res;
+            }
+        }
+        decracePossibility -= 0.1;
+        if (decracePossibility < 1e10)
+            break;
+    }
+    return res;
+}
 
-User &setPrfList(User &Usr, const LabelList &Lbl){
+User &setPrfList(User &Usr, const LabelList &Lbl) {
     Usr.setLabelList(Lbl);
     return Usr;
 }
@@ -305,7 +324,7 @@ bool saveUserMap(UserMap &UMap) {
     return writer.saveUserFiles(UMap);
 }
 
-UserMap loadUserMap(){
+UserMap loadUserMap() {
     Util reader;
     return reader.loadUserFiles();
 }
@@ -326,13 +345,13 @@ bool registUser(UserMap &UMap, User &usr) {
     return UMap.insert(usr);
 }
 
-User addStore(User &U,StoreMap &SM, Store &S){
+User addStore(User &U, StoreMap &SM, Store &S) {
     SM.insert(S);
     U.addStore(S);
     return U;
 }
 
-User delStore(User &U,StoreMap &SM, Store &S){
+User delStore(User &U, StoreMap &SM, Store &S) {
     U.removeStore(S);
     SM.remove(S);
     return U;
@@ -347,7 +366,7 @@ bool saveStoreUserMap(UserMap &UMap) {
     return writer.saveStoreUserFiles(UMap);
 }
 
-UserMap loadStoreUserMap(){
+UserMap loadStoreUserMap() {
     Util reader;
     return reader.loadStoreUserFiles();
 }

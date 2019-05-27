@@ -179,6 +179,9 @@ std::vector<Commodity> searchCmdt_single(Label2Com &index, StoreMap &SMap, Label
 // 模糊查找
 std::vector<Commodity> searchCmdt_mult(Label2Com &index, StoreMap &SMap, LabelList &lbl);
 
+// 猜你喜欢功能，至多100件商品，依照最近搜索出现概率从高到低
+std::vector<Commodity> randomSearch(Label2Com &index, StoreMap &SMap, User &U);
+
 // 设置用户喜好表
 User &setPrfList(User &Usr, const LabelList &Lbl);
 
