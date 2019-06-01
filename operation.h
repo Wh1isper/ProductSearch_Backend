@@ -139,10 +139,10 @@ bool updateStore(StoreMap &SM, Store &S);
 // -----------------------------------商户用户操作---------------------------------------------
 
 // 新建商店
-User addStore(User &UM,StoreMap &SM, Store &S);
+User &addStore(User &U,StoreMap &SM, Store &S);
 
 // 删除商店
-User delStore(User &UM,StoreMap &SM, Store &S);
+User &delStore(User &U,StoreMap &SM, Store &S);
 
 // 更新用户图
 bool updateStoreUserMap(UserMap &UMap, User &User);

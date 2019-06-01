@@ -345,13 +345,13 @@ bool registUser(UserMap &UMap, User &usr) {
     return UMap.insert(usr);
 }
 
-User addStore(User &U, StoreMap &SM, Store &S) {
+User &addStore(User &U, StoreMap &SM, Store &S) {
     SM.insert(S);
     U.addStore(S);
     return U;
 }
 
-User delStore(User &U, StoreMap &SM, Store &S) {
+User &delStore(User &U, StoreMap &SM, Store &S) {
     U.removeStore(S);
     SM.remove(S);
     return U;
