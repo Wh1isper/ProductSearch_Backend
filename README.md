@@ -2,6 +2,8 @@
 
 请每次更新根据更新内容填写README.md，以作为版本控制
 
+项目的详细说明见[项目说明](https://github.com/Wh1isper/ProductSearch_Backend/blob/master/%E9%A1%B9%E7%9B%AE%E8%AF%B4%E6%98%8E.pdf)
+
 ## 当前功能 ##
 
 1. 初始化商户图 
