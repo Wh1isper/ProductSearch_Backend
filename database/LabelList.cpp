@@ -34,6 +34,8 @@ LabelList::LabelList(std::vector<std::string> labelList) {
 }
 
 bool LabelList::append(const Label &lbl) {
+    if(lbl.empty())
+        return false;
     List *Srch = L;
     while (Srch->Next) {
         Srch = Srch->Next;
@@ -110,6 +112,8 @@ std::vector<Label> LabelList::getLabelList() const {
 }
 
 bool LabelList::push_ahead(const Label &lbl) {
+    if(lbl.empty())
+        return false;
     remove(lbl);
     List *insertList = new List(lbl);
     List *Node = L;
